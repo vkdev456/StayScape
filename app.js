@@ -23,7 +23,6 @@ async function main() {
 main();
 
 app.get("/testListing", async (req, res) => {
-  try {
     const sampleListing = new Listing({
       title: "My new Villa",
       description: "By the Beach",
@@ -34,9 +33,35 @@ app.get("/testListing", async (req, res) => {
 
     await sampleListing.save();
     console.log("Sample listing saved successfully");
-    res.status(201).send("Listing saved successfully!");
-  } catch (error) {
-    console.error("Error saving listing:", error);
-    res.status(500).send("Internal Server Error");
-  }
+    res.send("successful testing");
+
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const Schema = mongoose.Schema;
 
 const listingSchema = new Schema({
@@ -10,17 +9,32 @@ const listingSchema = new Schema({
   description: String,
   image: {
     type: String,
-    set: (v) =>
-      v === ""
-        ? "https://unsplash.com/photos/a-lake-surrounded-by-mountains-and-trees-under-a-blue-sky-jV8916l2k0I"
-        : v,
+    default:"https://unsplash.com/photos/a-lake-surrounded-by-mountains-and-trees-under-a-blue-sky-jV8916l2k0I",
+    set: (v) => v === "" ? "https://unsplash.com/photos/a-lake-surrounded-by-mountains-and-trees-under-a-blue-sky-jV8916l2k0I": v,
   },
   price: Number,
   location: String,
   country: String,
 });
 
+
 // Ensure model name is "Listing"
-const Listing = mongoose.model("Listing", listingSchema);
+const Listing = mongoose.model("Listing", listingSchema);//collection name
 
 module.exports = Listing;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
