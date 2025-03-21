@@ -1,16 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const Listing = require("./Models/listing.js"); // ✅ Ensure correct import
-
-const app = express();
-
-// Middleware to parse JSON data
-app.use(express.json());
-
-// Start the server
-app.listen(8080, () => {
-  console.log("Server is listening on port 8080");
-});
+const path=require("path");
 
 async function main() {
   try {
@@ -21,6 +12,17 @@ async function main() {
   }
 }
 main();
+
+const app = express();
+
+//path
+app.set("view engine","ejs");
+app.set("views",path.join(__dirname,"views"));
+
+app.listen(8080, () => {
+  console.log("Server is listening on port 8080");
+});
+
 
 app.get("/testListing", async (req, res) => {
     const sampleListing = new Listing({
@@ -36,6 +38,16 @@ app.get("/testListing", async (req, res) => {
     res.send("successful testing");
 
 });
+
+
+//index route retrieve listings
+app.get("/listings",async (req,res)=>{
+
+  const allListings= await Listing.find({});
+  res.render("listings/index.ejs",{allListings});
+
+});
+
 
 
 
