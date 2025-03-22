@@ -18,6 +18,8 @@ const app = express();
 //path
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
+app.use(express.urlencoded({extended:true}));
+
 
 app.listen(8080, () => {
   console.log("Server is listening on port 8080");
@@ -42,11 +44,36 @@ app.get("/testListing", async (req, res) => {
 
 //index route retrieve listings
 app.get("/listings",async (req,res)=>{
-
   const allListings= await Listing.find({});
   res.render("listings/index.ejs",{allListings});
 
 });
+
+//New listing route form
+app.get("/listings/new",(req,res)=>{
+    res.render("listings/new.ejs");
+});//this shoudl be above show route code
+//because if it overwise it thinks new as id
+
+
+//create Route
+app.post("/listings",async(req,res)=>{
+  // in form name=title then below
+  // let {title,description,price,image,country,location}=req.body;
+  //in form name=listing[title] array then this
+  const newlisting= new Listing(req.body.listing);
+  await newlisting.save()
+  res.redirect("/listings");
+})
+
+
+//Show Route
+app.get("/listings/:id",async(req,res)=>{
+      let {id}=req.params;
+      const listing=await Listing.findById(id);
+      res.render("listings/show.ejs",{listing});
+})
+
 
 
 
