@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stayscape</title>
-</head>
-<body>
-    <form method="POST" action="/listings/<%= listing._id %>?_method=PUT"> 
+<% layout("/layouts/boilerplate") %>
+    <body>
+     <form method="POST" action="/listings/<%= listing._id %>?_method=PUT"> 
         <input name="listing[title]" value="<%=listing.title%>" type="text">
         <br><br>
         <textarea name="listing[Description]" value="<%=listing.description%>" ></textarea>
@@ -20,7 +14,5 @@
         <input name="listing[location]" value="<%=listing.location%>" type="text">
         <br><br>
         <button>Add</button>
-    </form>
-    
-</body>
-</html>
+     </form>
+    </body>
