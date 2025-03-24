@@ -2,3 +2,17 @@ body{
     background-color: pink;
 }
 
+.navbar{
+    height:5rem;
+    background-color: white;
+}
+
+.fa-compass{
+    color:#fe424d;
+    font-size: 2rem;
+}
+
+.nav-link{
+    color:#222222 !important;
+     /*importan== to dominate our change over bootstraps  */
+}

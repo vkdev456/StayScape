@@ -27,12 +27,13 @@ app.engine('ejs',ejsMate);//include /partical in express ejs
 app.use(express.static(path.join(__dirname,"/public")));
 
 
-
 app.listen(8080, () => {
   console.log("Server is listening on port 8080");
 });
 
-
+app.get("/",(req,res)=>{
+  res.send('Hi, I am Root');
+})
 app.get("/testListing", async (req, res) => {
     const sampleListing = new Listing({
       title: "My new Villa",
@@ -47,7 +48,6 @@ app.get("/testListing", async (req, res) => {
     res.send("successful testing");
 
 });
-
 
 //index route retrieve listings
 app.get("/listings",async (req,res)=>{
@@ -96,7 +96,6 @@ app.put("/listings/:id", async (req,res) =>{
   res.redirect('/listings');
   
 });
-
 
 //Delete
 app.delete("/listings/:id", async (req,res) =>{
