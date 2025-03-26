@@ -1,5 +1,8 @@
 body{
     font-family:"Plus Jakarta Sans", sans-serif !important;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .navbar{
@@ -71,7 +74,6 @@ body{
 
 .card-body{
     padding: 0 !important;
-
 }
 .card-text p{
     font-weight: 400px;
@@ -88,3 +90,10 @@ opacity: 0;
     opacity: 0.2;
     background-color: white;
 }
+
+/* New Page */
+.add-btn{
+    background-color:#fe424d !important;
+    border: none !important;
+}
+
