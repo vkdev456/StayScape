@@ -5,51 +5,67 @@
          <br>
          <h2>Edit Listing</h2>
          <br>
-         <form method="POST" action="/listings/<%= listing._id %>?_method=PUT">
+         <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation" id="listingForm">
 
-            <!-- Title -->
+           
             <div class="mb-3">
                <label for="title" class="form-label">Title</label>
-               <input name="listing[title]" value="<%= listing.title %>" type="text" class="form-control" placeholder="Enter title">
+               <input name="listing[title]" value="<%= listing.title %>" type="text" class="form-control" placeholder="Enter title" required>
+               <div class="invalid-feedback">Title is required</div> 
             </div>
 
-            <!-- Description -->
+           
             <div class="mb-3">
                <label for="description" class="form-label">Description</label>
-               <textarea name="listing[description]" class="form-control" placeholder="Enter description"><%= listing.description %></textarea>
+               <textarea name="listing[description]" class="form-control" placeholder="Enter description" required><%= listing.description %></textarea>
+               <div class="invalid-feedback">Description is required</div>
             </div>
 
-            <!-- Image URL -->
+            
             <div class="mb-3">
                <label for="image" class="form-label">Image URL</label>
                <input name="listing[image]" value="<%= listing.image %>" type="text" class="form-control" placeholder="Enter image URL">
             </div>
 
-            <!-- Price and Country (in the same row) -->
+            
             <div class="row">
                <div class="mb-3 col-md-4">
                   <label for="price" class="form-label">Price</label>
-                  <input name="listing[price]" value="<%= listing.price %>" type="number" class="form-control" placeholder="Enter price">
+                  <input name="listing[price]" value="<%= listing.price %>" type="number" class="form-control" placeholder="Enter price" required>
+                  <div class="invalid-feedback">Price should be valid</div> 
                </div>
 
                <div class="mb-3 col-md-8">
                   <label for="country" class="form-label">Country</label>
-                  <input name="listing[country]" value="<%= listing.country %>" type="text" class="form-control" placeholder="Enter country">
+                  <input name="listing[country]" value="<%= listing.country %>" type="text" class="form-control" placeholder="Enter country" required>
+                  <div class="invalid-feedback">Country name is required</div> 
                </div>
             </div>
 
-            <!-- Location -->
+            
             <div class="mb-3">
                <label for="location" class="form-label">Location</label>
-               <input name="listing[location]" value="<%= listing.location %>" type="text" class="form-control" placeholder="Enter location">
+               <input name="listing[location]" value="<%= listing.location %>" type="text" class="form-control" placeholder="Enter location" required>
+               <div class="invalid-feedback">Location is required</div>  
             </div>
 
-            <!-- Submit Button -->
+            
             <br>
-            <button class="btn btn-dark edit-btn">Update</button>
+            <button class="btn btn-dark edit-btn" type="submit">Update</button>
             <br><br><br>
 
          </form>
       </div>
    </div>
+
+   <script>
+      document.getElementById("listingForm").addEventListener("submit", function(event) {
+          let form = event.target;
+          if (!form.checkValidity()) {
+              event.preventDefault();
+              event.stopPropagation();
+          }
+          form.classList.add("was-validated");
+      });
+   </script>
 </body>

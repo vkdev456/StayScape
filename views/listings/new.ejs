@@ -3,17 +3,19 @@
 <div class="row">
   <div class="col-8 offset-2"> 
     <br>
-    <h2>Create New listing</h2>
+    <h2>Create New Listing</h2>
     <br>
-    <form method="POST" action="/listings"  novalidate class="needs-validation">
+    <form method="POST" action="/listings" novalidate class="needs-validation" id="listingForm">
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
-            <input name="listing[title]" placeholder="Enter title" type="text" class="form-control" required />
+            <input name="listing[title]" placeholder="Enter title" type="text" class="form-control" required/>
+            <div class="invalid-feedback">Title is required</div> 
         </div>
         
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
             <textarea name="listing[description]" placeholder="Enter description" class="form-control" required></textarea>
+            <div class="invalid-feedback">Description is required</div>
         </div>
         
         <div class="mb-3">
@@ -25,24 +27,37 @@
             <div class="mb-3 col-md-4">
                 <label for="price" class="form-label">Price</label>
                 <input name="listing[price]" placeholder="Enter price" type="number" class="form-control" required />
+                <div class="invalid-feedback">Price should be valid</div> 
             </div>
 
             <div class="mb-3 col-md-8">
                 <label for="country" class="form-label">Country</label>
                 <input name="listing[country]" placeholder="Enter country" type="text" class="form-control" required />
+                <div class="invalid-feedback">Country name is required</div> 
             </div>
         </div>
         
         <div class="mb-3">
             <label for="location" class="form-label">Location</label>
             <input name="listing[location]" placeholder="Enter location" type="text" class="form-control" required />
+            <div class="invalid-feedback">Location is required</div> 
         </div>
+
         <br/><br/>
-        <button class="btn btn-dark add-btn">Add</button>
-        <br><br>
-        <br><br>
+        <button class="btn btn-dark add-btn" type="submit">Add</button>
         <br><br>
     </form>
   </div>
 </div>
+
+<script>
+document.getElementById("listingForm").addEventListener("submit", function(event) {
+    let form = event.target;
+    if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    form.classList.add("was-validated");
+});
+</script>
 </body>
