@@ -4,6 +4,8 @@ const Listing = require("./Models/listing.js"); // ✅ Ensure correct import
 const path=require("path");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
+const wrapAsync=require("./utils/wrapasync.js");
+const wrapasync = require("./utils/wrapasync.js");
 
 
 async function main() {
@@ -64,19 +66,23 @@ app.get("/listings/new",(req,res)=>{
 
 
 //create Route
-app.post("/listings",async(req,res)=>{
-  // in form name=title then below
-  // let {title,description,price,image,country,location}=req.body;
-  //in form name=listing[title] array then this
-  const newlisting= new Listing(req.body.listing);
-  await newlisting.save()
-  res.redirect("/listings");
-})
+app.post("/listings",wrapasync(async (req,res,next)=>{
+    // in form name=title then below
+    // let {title,description,price,image,country,location}=req.body;
+    //in form name=listing[title] array then this
+
+    
+      const newlisting= new Listing(req.body.listing);
+      await newlisting.save()
+      res.redirect("/listings");
+    })
+  
+  );
 
 
 //Show Route
 app.get("/listings/:id",async(req,res)=>{
-  
+
       let {id}=req.params;
       const listing=await Listing.findById(id);
       res.render("listings/show.ejs",{listing});
@@ -107,6 +113,10 @@ app.delete("/listings/:id", async (req,res) =>{
     res.redirect("/listings");
    
 });
+
+app.use((err,req,res,next)=>{
+  res.send("something went wrong");
+})
 
 
 
