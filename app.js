@@ -4,9 +4,8 @@ const Listing = require("./Models/listing.js"); // ✅ Ensure correct import
 const path=require("path");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
-const wrapAsync=require("./utils/wrapasync.js");
 const wrapasync = require("./utils/wrapasync.js");
-
+const ExpressError = require("./utils/ExpressError.js");
 
 async function main() {
   try {
@@ -37,26 +36,28 @@ app.get("/",(req,res)=>{
   res.send('Hi, I am Root');
 })
 app.get("/testListing", async (req, res) => {
-    const sampleListing = new Listing({
+
+  const sampleListing = new Listing({
       title: "My new Villa",
       description: "By the Beach",
       price: 1200,
       location: "Calangute, Goa",
       country: "India",
-    });
+  });
 
-    await sampleListing.save();
-    console.log("Sample listing saved successfully");
-    res.send("successful testing");
+  await sampleListing.save();
+  console.log("Sample listing saved successfully");
+  res.send("successful testing");
 
 });
 
 //index route retrieve listings
-app.get("/listings",async (req,res)=>{
+app.get("/listings",wrapasync(async (req,res)=>{
+
   const allListings= await Listing.find({});
   res.render("listings/index.ejs",{allListings});
 
-});
+}));
 
 //New listing route form
 app.get("/listings/new",(req,res)=>{
@@ -70,53 +71,65 @@ app.post("/listings",wrapasync(async (req,res,next)=>{
     // in form name=title then below
     // let {title,description,price,image,country,location}=req.body;
     //in form name=listing[title] array then this
-
-    
-      const newlisting= new Listing(req.body.listing);
-      await newlisting.save()
-      res.redirect("/listings");
-    })
-  
-  );
+    // client didnot send valid request then
+    if(!req.body.Listing){
+      throw new ExpressError(400,"Send a valid data for listing");
+    }
+    const newlisting= new Listing(req.body.listing);
+    await newlisting.save()
+    res.redirect("/listings");
+  })
+);
 
 
 //Show Route
-app.get("/listings/:id",async(req,res)=>{
+app.get("/listings/:id",wrapasync(async(req,res)=>{
 
-      let {id}=req.params;
-      const listing=await Listing.findById(id);
-      res.render("listings/show.ejs",{listing});
-})
+  let {id}=req.params;
+  const listing=await Listing.findById(id);
+  res.render("listings/show.ejs",{listing});
+
+}));
 
 //edit Route
-app.get("/listings/:id/edit",async (req,res)=>{
+app.get("/listings/:id/edit",wrapasync(async (req,res)=>{
 
   let {id}=req.params;
   const listing=await Listing.findById(id);
   res.render("listings/edit.ejs",{listing});
-});
+
+}));
 
 //update
-app.put("/listings/:id", async (req,res) =>{
+app.put("/listings/:id", wrapasync(async (req,res) =>{
   
   let {id}=req.params;
   await Listing.findByIdAndUpdate(id,{...req.body.listing});
   res.redirect(`/listings/${id}`);
   
-});
+}));
 
 //Delete
-app.delete("/listings/:id", async (req,res) =>{
+app.delete("/listings/:id", wrapasync(async (req,res) =>{
   
     let {id}=req.params;
     await Listing.findByIdAndDelete(id);
     res.redirect("/listings");
    
+}));
+
+//if Route other than above
+// * is used take that Route 
+
+app.all("*",(req,res,next)=>{
+  next(new ExpressError(404, "Page not found!"));
 });
 
 app.use((err,req,res,next)=>{
-  res.send("something went wrong");
+  let {statusCode=500,message="Some thing went wrong!"}=err;
+  res.status(statusCode).send(message);
 })
+
 
 
 
