@@ -6,6 +6,7 @@ const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
 const wrapasync = require("./utils/wrapasync.js");
 const ExpressError = require("./utils/ExpressError.js");
+const {listingSchema}=require("./schema.js");
 
 async function main() {
   try {
@@ -72,12 +73,13 @@ app.post("/listings",wrapasync(async (req,res,next)=>{
     // let {title,description,price,image,country,location}=req.body;
     //in form name=listing[title] array then this
     // client didnot send valid request then
-    if(!req.body.Listing){
-      throw new ExpressError(400,"Send a valid data for listing");
-    }
+
+    let result = listingSchema.validate(req.body);
+    console.log(result);
     const newlisting= new Listing(req.body.listing);
     await newlisting.save()
     res.redirect("/listings");
+
   })
 );
 
