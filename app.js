@@ -6,7 +6,7 @@ const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
 const wrapasync = require("./utils/wrapasync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const {listingSchema}=require("./schema.js");
+const   listingSchema=require("./schema.js");
 
 async function main() {
   try {
@@ -19,6 +19,22 @@ async function main() {
 main();
 
 const app = express();
+
+
+//validation of
+const validateListing = (req, res, next) => {
+  if (!req.body || !req.body.listing) {
+    throw new ExpressError(400, "Invalid listing data!");
+  }
+
+  let { error } = listingSchema.validate(req.body);
+  if (error) {
+    let errMsg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(400, errMsg);
+  }
+  next();
+};
+
 
 //path
 app.set("view engine","ejs");
@@ -68,14 +84,12 @@ app.get("/listings/new",(req,res)=>{
 
 
 //create Route
-app.post("/listings",wrapasync(async (req,res,next)=>{
+app.post("/listings",validateListing,wrapasync(async (req,res,next)=>{
     // in form name=title then below
     // let {title,description,price,image,country,location}=req.body;
     //in form name=listing[title] array then this
     // client didnot send valid request then
 
-    let result = listingSchema.validate(req.body);
-    console.log(result);
     const newlisting= new Listing(req.body.listing);
     await newlisting.save()
     res.redirect("/listings");
@@ -103,7 +117,7 @@ app.get("/listings/:id/edit",wrapasync(async (req,res)=>{
 }));
 
 //update
-app.put("/listings/:id", wrapasync(async (req,res) =>{
+app.put("/listings/:id",validateListing, wrapasync(async (req,res) =>{
   
   let {id}=req.params;
   await Listing.findByIdAndUpdate(id,{...req.body.listing});
