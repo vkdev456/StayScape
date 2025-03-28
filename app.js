@@ -97,7 +97,6 @@ app.post("/listings",validateListing,wrapasync(async (req,res,next)=>{
   })
 );
 
-
 //Show Route
 app.get("/listings/:id",wrapasync(async(req,res)=>{
 
@@ -138,13 +137,17 @@ app.delete("/listings/:id", wrapasync(async (req,res) =>{
 // * is used take that Route 
 
 app.all("*",(req,res,next)=>{
+
   next(new ExpressError(404, "Page not found!"));
+
 });
 
 app.use((err,req,res,next)=>{
+
   let {statusCode=500,message="Some thing went wrong!"}=err;
   res.status(statusCode).render("error.ejs",{ message });
   // res.status(statusCode).send(message);
+
 })
 
 
