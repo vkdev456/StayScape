@@ -1,12 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const Listing = require("./Models/listing.js"); // ✅ Ensure correct import
+const Listing = require("./Models/listing.js"); 
 const path=require("path");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
 const wrapasync = require("./utils/wrapasync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const   listingSchema=require("./schema.js");
+const Review = require("./Models/review.js");
 
 async function main() {
   try {
@@ -132,6 +133,25 @@ app.delete("/listings/:id", wrapasync(async (req,res) =>{
     res.redirect("/listings");
    
 }));
+
+
+// Add Route for Reviews
+app.post("/listings/:id/reviews", async(req,res)=>{
+
+  let listing = await Listing.findById(req.params.id);
+  let newReview = new Review(req.body.review);
+
+  listing.reviews.push(newReview);
+
+    await newReview.save();
+    await listing.save();
+ 
+    console.log("new review saved");
+    res.redirect(`/listings/${listing._id}`);
+
+});
+
+
 
 //if Route other than above
 // * is used take that Route 
