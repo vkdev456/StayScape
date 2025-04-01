@@ -170,6 +170,20 @@ app.post("/listings/:id/reviews", validateReview,async(req,res)=>{
 
 });
 
+//Delete Route for Reviews
+app.delete("/listings/:id/reviews/:reviewId", wrapasync(async (req, res) => {
+  let { id, reviewId } = req.params;
+
+  // Remove review reference from listing
+  await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+
+  // Delete the actual review from the database
+  await Review.findByIdAndDelete(reviewId);
+  console.log("Deleting review:", reviewId, "from listing:", id);
+
+  res.redirect(`/listings/${id}`); // Redirect to the specific listing
+}));
+
 //if Route other than above
 // * is used take that Route 
 
@@ -178,7 +192,6 @@ app.all("*",(req,res,next)=>{
   next(new ExpressError(404, "Page not found!"));
 
 });
-
 
 app.use((err,req,res,next)=>{
 
