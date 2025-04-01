@@ -7,6 +7,7 @@ const ejsMate=require("ejs-mate");
 const wrapasync = require("./utils/wrapasync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const   listingSchema=require("./schema.js");
+const reviewSchema=require("./schema.js");
 const Review = require("./Models/review.js");
 
 async function main() {
@@ -17,12 +18,13 @@ async function main() {
     console.error("DB connection error:", err);
   }
 }
+
 main();
 
 const app = express();
 
 
-//validation of
+//validation Listing
 const validateListing = (req, res, next) => {
   if (!req.body || !req.body.listing) {
     throw new ExpressError(400, "Invalid listing data!");
@@ -36,8 +38,22 @@ const validateListing = (req, res, next) => {
   next();
 };
 
+//validate Review
+const validateReview = (req, res, next) => {
+  if (!req.body || !req.body.listing) {
+    throw new ExpressError(400, "Invalid listing data!");
+  }
+
+  let { error } = reviewSchema.validate(req.body);
+  if (error) {
+    let errMsg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(400, errMsg);
+  }
+  next();
+};
 
 //path
+
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
 app.use(express.urlencoded({extended:true}));
@@ -82,7 +98,6 @@ app.get("/listings/new",(req,res)=>{
     res.render("listings/new.ejs");
 });//this shoudl be above show route code
 //because if it overwise it thinks new as id
-
 
 //create Route
 app.post("/listings",validateListing,wrapasync(async (req,res,next)=>{
@@ -136,7 +151,7 @@ app.delete("/listings/:id", wrapasync(async (req,res) =>{
 
 
 // Add Route for Reviews
-app.post("/listings/:id/reviews", async(req,res)=>{
+app.post("/listings/:id/reviews", validateReview,async(req,res)=>{
 
   let listing = await Listing.findById(req.params.id);
   let newReview = new Review(req.body.review);
@@ -151,8 +166,6 @@ app.post("/listings/:id/reviews", async(req,res)=>{
 
 });
 
-
-
 //if Route other than above
 // * is used take that Route 
 
@@ -162,6 +175,7 @@ app.all("*",(req,res,next)=>{
 
 });
 
+
 app.use((err,req,res,next)=>{
 
   let {statusCode=500,message="Some thing went wrong!"}=err;
@@ -169,7 +183,6 @@ app.use((err,req,res,next)=>{
   // res.status(statusCode).send(message);
 
 })
-
 
 
 
