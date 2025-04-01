@@ -41,6 +41,12 @@
             </div>
             <button class="btn btn-outline-dark" type="submit">Submit</button>
         </form>
+        <h4>All Reviews</h4>
+        <ui>
+            <% for(review of listing.reviews){ %>
+                  <li><%= review.comment%>, <%= review.rating%> stars</li>
+            <% } %>
+        </ui>
     </div>
 </div>
 
@@ -57,3 +63,31 @@ document.getElementById("listingForm1").addEventListener("submit", function(even
     form.classList.add("was-validated");
 });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

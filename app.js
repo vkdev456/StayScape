@@ -1,13 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const Listing = require("./Models/listing.js"); 
-const path=require("path");
-const methodOverride=require("method-override");
-const ejsMate=require("ejs-mate");
+const path = require("path");
+const methodOverride= require("method-override");
+const ejsMate = require("ejs-mate");
 const wrapasync = require("./utils/wrapasync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const   listingSchema=require("./schema.js");
-const reviewSchema=require("./schema.js");
+const {listingSchema,reviewSchema} = require("./schema.js");
 const Review = require("./Models/review.js");
 
 async function main() {
@@ -38,9 +37,10 @@ const validateListing = (req, res, next) => {
   next();
 };
 
+
 //validate Review
 const validateReview = (req, res, next) => {
-  if (!req.body || !req.body.listing) {
+  if (!req.body || !req.body.review) {
     throw new ExpressError(400, "Invalid listing data!");
   }
 
@@ -52,8 +52,8 @@ const validateReview = (req, res, next) => {
   next();
 };
 
-//path
 
+//path
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
 app.use(express.urlencoded({extended:true}));
@@ -66,9 +66,11 @@ app.listen(8080, () => {
   console.log("Server is listening on port 8080");
 });
 
+
 app.get("/",(req,res)=>{
   res.send('Hi, I am Root');
 })
+
 app.get("/testListing", async (req, res) => {
 
   const sampleListing = new Listing({
@@ -85,6 +87,7 @@ app.get("/testListing", async (req, res) => {
 
 });
 
+
 //index route retrieve listings
 app.get("/listings",wrapasync(async (req,res)=>{
 
@@ -92,6 +95,7 @@ app.get("/listings",wrapasync(async (req,res)=>{
   res.render("listings/index.ejs",{allListings});
 
 }));
+
 
 //New listing route form
 app.get("/listings/new",(req,res)=>{
@@ -117,7 +121,7 @@ app.post("/listings",validateListing,wrapasync(async (req,res,next)=>{
 app.get("/listings/:id",wrapasync(async(req,res)=>{
 
   let {id}=req.params;
-  const listing=await Listing.findById(id);
+  const listing=await Listing.findById(id).populate("reviews");
   res.render("listings/show.ejs",{listing});
 
 }));
@@ -183,6 +187,9 @@ app.use((err,req,res,next)=>{
   // res.status(statusCode).send(message);
 
 })
+
+
+
 
 
 
