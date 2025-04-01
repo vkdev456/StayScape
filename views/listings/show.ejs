@@ -7,7 +7,7 @@
 <div class="row justify-content-center"> <!-- Center the content -->
     <div class="col-8">
         <h2><b><%= listing.title %></b></h2>
-        <div class="card"> 
+        <div class="card listing-card"> 
             <img src="<%=listing.image%>" class="card-img-top show-image" alt="Listing Image">
             <div class="card-body">
                 <br>
@@ -41,12 +41,21 @@
             </div>
             <button class="btn btn-outline-dark" type="submit">Submit</button>
         </form>
-        <h4>All Reviews</h4>
-        <ui>
-            <% for(review of listing.reviews){ %>
-                  <li><%= review.comment%>, <%= review.rating%> stars</li>
-            <% } %>
-        </ui>
+
+
+        <p><b>All Reviews</b></p>
+        <div class="row ">
+        <% for(review of listing.reviews){ %>
+            <div class="card col-5 ms-3 mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Jane Doe</h5>
+                    <P class="card-text"><%= review.comment %></P>
+                    <P class="card-text"><%= review.rating %></P>
+                </div>
+            </div>
+        <% } %>
+        </div>
+
     </div>
 </div>
 
@@ -63,6 +72,7 @@ document.getElementById("listingForm1").addEventListener("submit", function(even
     form.classList.add("was-validated");
 });
 </script>
+
 
 
 

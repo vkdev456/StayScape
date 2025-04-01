@@ -27,8 +27,6 @@ body{
 
 /* footer */
 
-
-
 .f-info-links a{
     text-decoration: none;
     color:#222222;
@@ -64,11 +62,9 @@ body{
     align-items: space-evenly;
 }
 
-
-
 /* cards */
 
-.card {
+.listing-card {
     width: 100% !important; /* Ensure it fits within the column */
     border: none !important;
     margin-bottom: 2rem;   
