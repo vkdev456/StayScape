@@ -5,6 +5,8 @@ const { listingSchema } = require("../schema.js");
 const ExpressError = require("../utils/ExpressError.js");
 const Listing = require("../Models/listing.js");
 
+
+
 //validation Listing
 const validateListing = (req, res, next) => {
     if (!req.body || !req.body.listing) {
@@ -34,12 +36,11 @@ router.get("/new",(req,res)=>{
 //because if it overwise it thinks new as id
 
 //create Route
-router.post("/listings",validateListing,wrapasync(async (req,res,next)=>{
+router.post("/",validateListing,wrapasync(async (req,res,next)=>{
     // in form name=title then below
     // let {title,description,price,image,country,location}=req.body;
     //in form name=listing[title] array then this
     // client didnot send valid request then
-
     const newlisting= new Listing(req.body.listing);
     await newlisting.save()
     res.redirect("/listings");
@@ -65,13 +66,17 @@ router.get("/:id/edit",wrapasync(async (req,res)=>{
 
 }));
 
-//update
-router.put("/:id",validateListing, wrapasync(async (req,res) =>{
-  
-  let {id}=req.params;
-  await Listing.findByIdAndUpdate(id,{...req.body.listing});
+//update route
+router.put("/:id", validateListing, wrapasync(async (req, res) => {
+  let { id } = req.params;
+  console.log("Received Update Request:", req.body); 
+
+  if (!req.body.listing) {
+      throw new ExpressError(400, "Invalid listing data!");
+  }
+ 
+  await Listing.findByIdAndUpdate(id, { ...req.body.listing });
   res.redirect(`/listings/${id}`);
-  
 }));
 
 //Delete
@@ -83,5 +88,17 @@ router.delete("/:id", wrapasync(async (req,res) =>{
    
 }));
 
-
 module.exports=router;
+
+
+
+
+
+
+
+
+
+
+
+
+
