@@ -5,29 +5,26 @@
          <br>
          <h2>Edit Listing</h2>
          <br>
-         <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation" id="listingForm">
 
-           
+      <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation" id="listingForm">
+
             <div class="mb-3">
                <label for="title" class="form-label">Title</label>
                <input name="listing[title]" value="<%= listing.title %>" type="text" class="form-control" placeholder="Enter title" required>
                <div class="invalid-feedback">Title is required</div> 
             </div>
 
-           
             <div class="mb-3">
                <label for="description" class="form-label">Description</label>
                <textarea name="listing[description]" class="form-control" placeholder="Enter description" required><%= listing.description %></textarea>
                <div class="invalid-feedback">Description is required</div>
             </div>
 
-            
             <div class="mb-3">
                <label for="image" class="form-label">Image URL</label>
                <input name="listing[image]" value="<%= listing.image %>" type="text" class="form-control" placeholder="Enter image URL">
             </div>
 
-            
             <div class="row">
                <div class="mb-3 col-md-4">
                   <label for="price" class="form-label">Price</label>
@@ -42,14 +39,12 @@
                </div>
             </div>
 
-            
             <div class="mb-3">
                <label for="location" class="form-label">Location</label>
                <input name="listing[location]" value="<%= listing.location %>" type="text" class="form-control" placeholder="Enter location" required>
                <div class="invalid-feedback">Location is required</div>  
             </div>
 
-            
             <br>
             <button class="btn btn-dark edit-btn" type="submit">Update</button>
             <br><br><br>
@@ -68,4 +63,5 @@
           form.classList.add("was-validated");
       });
    </script>
+
 </body>
