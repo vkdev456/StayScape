@@ -43,8 +43,10 @@ router.post("/",validateListing,wrapasync(async (req,res,next)=>{
     // client didnot send valid request then
     const newlisting= new Listing(req.body.listing);
     await newlisting.save()
-    res.redirect("/listings");
 
+    req.flash("success", "New Listing Created!");
+    res.redirect("/listings");
+    
   })
 );
 

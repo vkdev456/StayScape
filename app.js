@@ -6,6 +6,8 @@ const ejsMate = require("ejs-mate");
 const wrapasync = require("./utils/wrapasync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
+const flash=require("connect-flash");
+
 
 
 const listings = require("./routes/listing.js");
@@ -24,6 +26,27 @@ main();
 
 const app = express();
 
+
+//path
+app.set("view engine","ejs");
+app.set("views",path.join(__dirname,"views"));
+app.use(express.urlencoded({extended:true}));
+app.use(methodOverride("_method"));
+app.engine('ejs',ejsMate);//include /partical in express ejs
+app.use(express.static(path.join(__dirname,"/public")));
+
+
+app.listen(8080, () => {
+  console.log("Server is listening on port 8080");
+});
+
+
+app.get("/",(req,res)=>{
+  res.send('Hi, I am Root');
+})
+
+
+
 //sessions
 const sessionOptions={
   secret: "mysupersecretcode",
@@ -36,34 +59,20 @@ const sessionOptions={
   },
 }
 
-
-
-
-
-
-
-//path
-app.set("view engine","ejs");
-app.set("views",path.join(__dirname,"views"));
-app.use(express.urlencoded({extended:true}));
-app.use(methodOverride("_method"));
-app.engine('ejs',ejsMate);//include /partical in express ejs
-app.use(express.static(path.join(__dirname,"/public")));
-
+//session
 app.use(session(sessionOptions));
+app.use(flash());
 
-app.use("/listings", listings);
-app.use("/listings/:id/reviews", reviews);
-
-
-app.listen(8080, () => {
-  console.log("Server is listening on port 8080");
+app.use((req,res,next)=>{
+  res.locals.success=req.flash("success");
+  next();
 });
 
 
-app.get("/",(req,res)=>{
-  res.send('Hi, I am Root');
-})
+
+//routes
+app.use("/listings", listings);
+app.use("/listings/:id/reviews", reviews);
 
 
 app.get("/testListing", async (req, res) => {
