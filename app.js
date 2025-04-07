@@ -5,6 +5,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapasync = require("./utils/wrapasync.js");
 const ExpressError = require("./utils/ExpressError.js");
+const session=require("express-session");
 
 
 const listings = require("./routes/listing.js");
@@ -32,6 +33,8 @@ app.use(methodOverride("_method"));
 app.engine('ejs',ejsMate);//include /partical in express ejs
 app.use(express.static(path.join(__dirname,"/public")));
 
+
+
 app.use("/listings", listings);
 app.use("/listings/:id/reviews", reviews);
 
@@ -40,9 +43,12 @@ app.listen(8080, () => {
   console.log("Server is listening on port 8080");
 });
 
+
+
 app.get("/",(req,res)=>{
   res.send('Hi, I am Root');
 })
+
 
 app.get("/testListing", async (req, res) => {
 
@@ -63,14 +69,10 @@ app.get("/testListing", async (req, res) => {
   // ✅ Ensure this is correctly placed
 
 
-
-
 //if Route other than above
 // * is used take that Route 
 app.all("*",(req,res,next)=>{
-
-    next(new ExpressError(404, "Page not found!"));
-
+  next(new ExpressError(404, "Page not found!"));
 });
 
 app.use((err,req,res,next)=>{
@@ -78,8 +80,17 @@ app.use((err,req,res,next)=>{
   let {statusCode=500,message="Some thing went wrong!"}=err;
   res.status(statusCode).render("error.ejs",{ message });
   // res.status(statusCode).send(message);
-
 });
+
+
+const sessionOptions={
+    secret: "mysupersecretcode",
+    resave: false,
+    saveUninitialized: true
+}
+
+app.use(session(sessionOptions));
+
 
 
 
