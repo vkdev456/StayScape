@@ -5,8 +5,6 @@ const { listingSchema } = require("../schema.js");
 const ExpressError = require("../utils/ExpressError.js");
 const Listing = require("../Models/listing.js");
 
-
-
 //validation Listing
 const validateListing = (req, res, next) => {
     if (!req.body || !req.body.listing) {
@@ -55,6 +53,13 @@ router.get("/:id",wrapasync(async(req,res)=>{
 
   let {id}=req.params;
   const listing=await Listing.findById(id).populate("reviews");
+
+  if(!listing){
+    req.flash("success", "Listing you requested for does not exist");
+    res.redirect("/listings");///if listing doesnot exist redirect to listings
+    //after and flash the message on top.
+  }
+
   res.render("listings/show.ejs",{listing});
 
 }));
@@ -89,7 +94,6 @@ router.delete("/:id", wrapasync(async (req,res) =>{
     req.flash("success", "Listing Deleted");
     res.redirect("/listings");
 
-   
 }));
 
 module.exports=router;
