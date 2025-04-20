@@ -69,7 +69,6 @@ app.use((req,res,next)=>{
 });
 
 
-
 //routes
 app.use("/listings", listings);
 app.use("/listings/:id/reviews", reviews);
@@ -107,6 +106,58 @@ app.use((err,req,res,next)=>{
   res.status(statusCode).render("error.ejs",{ message });
   // res.status(statusCode).send(message);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
