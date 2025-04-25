@@ -12,13 +12,10 @@ const LocalStrategy=require("passport-local");
 const User=require("./models/user.js");
 
 
-
-
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 const { parseArgs } = require("util");
-
 
 
 async function main(){
@@ -51,7 +48,6 @@ app.listen(8080, () => {
 app.get("/",(req,res)=>{
   res.send('Hi, I am Root');
 })
-
 
 
 //sessions
@@ -97,7 +93,6 @@ app.get("/demouser",async (req,res)=>{
   let registeredUser=await User.register(fakeUser,"helloworld");
   res.send(registeredUser);
 
-
 });
 
 
@@ -105,7 +100,6 @@ app.get("/demouser",async (req,res)=>{
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
-
 
 app.get("/testListing", async (req, res) => {
 
@@ -132,7 +126,6 @@ app.all("*",(req,res,next)=>{
   next(new ExpressError(404, "Page not found!"));
 });
 
-
 app.use((err,req,res,next)=>{
 
   let {statusCode=500,message="Some thing went wrong!"}=err;
@@ -140,6 +133,9 @@ app.use((err,req,res,next)=>{
   // res.status(statusCode).send(message);
 
 });
+
+
+
 
 
 
