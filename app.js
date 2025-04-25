@@ -11,12 +11,10 @@ const passport=require("passport");
 const LocalStrategy=require("passport-local");
 const User=require("./models/user.js");
 
-
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 const { parseArgs } = require("util");
-
 
 async function main(){
   try {
@@ -30,7 +28,6 @@ main();
 
 const app = express();
 
-
 //path
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
@@ -39,16 +36,13 @@ app.use(methodOverride("_method"));
 app.engine('ejs',ejsMate);//include /partical in express ejs
 app.use(express.static(path.join(__dirname,"/public")));
 
-
-app.listen(8080, () => {
+app.listen(5000, () => {
   console.log("Server is listening on port 8080");
 });
-
 
 app.get("/",(req,res)=>{
   res.send('Hi, I am Root');
 })
-
 
 //sessions
 const sessionOptions={
@@ -76,25 +70,23 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
-
 app.use((req,res,next)=>{
   res.locals.success=req.flash("success");
   res.locals.error=req.flash("error");
   next();
 });
 
-app.get("/demouser",async (req,res)=>{
+// app.get("/demouser",async (req,res)=>{
 
-  let fakeUser=new User({
-    email:"student@gmail.com",
-    username:"delta-student"
-  });
+//   let fakeUser=new User({
+//     email:"student@gmail.com",
+//     username:"delta-student"
+//   });
 
-  let registeredUser=await User.register(fakeUser,"helloworld");
-  res.send(registeredUser);
+//   let registeredUser=await User.register(fakeUser,"helloworld");
+//   res.send(registeredUser);
 
-});
-
+// });
 
 //routes
 app.use("/listings", listingRouter);
@@ -119,7 +111,6 @@ app.get("/testListing", async (req, res) => {
 
 // ✅ Ensure this is correctly placed
 
-
 //if Route other than above
 // * is used take that Route 
 app.all("*",(req,res,next)=>{
@@ -133,6 +124,7 @@ app.use((err,req,res,next)=>{
   // res.status(statusCode).send(message);
 
 });
+
 
 
 
