@@ -3,6 +3,7 @@ const router = express.Router();
 const User=require("../models/user.js");  
 const wrapasync = require("../utils/wrapasync.js");
 const passport=require("passport");
+const { saveRedirectUrl } = require("../middleware.js");
 
 router.get("/signup",(req,res)=>{
     res.render("users/signup.ejs");
@@ -32,10 +33,12 @@ router.get("/login",(req,res)=>{
     res.render("users/login.ejs");
 })
  
-router.post("/login",passport.authenticate("local",{failureRedirect:'/login',failureFlash:true}),
+router.post("/login",saveRedirectUrl,
+    passport.authenticate("local",{failureRedirect:'/login',failureFlash:true}),
     async(req,res)=>{
-      req.flash("success","welcome to StayScape! You are Logged in!");
-      res.redirect("/listings");
+      req.flash("success","Welcome to StayScape! You are Logged in!");
+      let redirectUrl=res.locals.redirectUrl || "/listings";
+      res.redirect(redirectUrl);
     }
 );
 
