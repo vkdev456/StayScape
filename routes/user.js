@@ -14,8 +14,14 @@ router.post("/signup",wrapasync(async(req,res)=>{
     const newUser= new User({email,username});
     const registeredUser= await User.register(newUser,password);
     console.log(registeredUser);
-    req.flash("success","Welcome to StayScape");
-    res.redirect("/listings");
+    // After signup direct Login
+    req.login(registeredUser,(err)=>{
+        if(err){
+            return next(err);
+        }
+        req.flash("success","Welcome to StayScape");
+        res.redirect("/listings");
+    })
    }catch(e){
        req.flash("error",e.message);  
        res.redirect("/signup");   
