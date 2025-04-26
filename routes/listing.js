@@ -4,6 +4,9 @@ const wrapasync = require("../utils/wrapasync.js");
 const { listingSchema } = require("../schema.js");
 const ExpressError = require("../utils/ExpressError.js");
 const Listing = require("../Models/listing.js");
+const {isLoggedin}=require("../middleware.js");
+
+
 
 //validation Listing
 const validateListing = (req, res, next) => {
@@ -28,10 +31,16 @@ router.get("/",wrapasync(async (req,res)=>{
 }));
 
 //New listing route form
-router.get("/new",(req,res)=>{
+router.get("/new",isLoggedin,(req,res)=>{
+    if(!req.isAuthenticated()){//Verify login before creating listing
+      req.flash("error","you must be logged in to Create a listing!");
+      return res.redirect("/listings");
+    }
     res.render("listings/new.ejs");
 });//this shoudl be above show route code
 //because if it overwise it thinks new as id
+
+
 
 //create Route
 router.post("/",validateListing,wrapasync(async (req,res,next)=>{
@@ -65,7 +74,7 @@ router.get("/:id",wrapasync(async(req,res)=>{
 }));
 
 //edit Route
-router.get("/:id/edit",wrapasync(async (req,res)=>{
+router.get("/:id/edit",isLoggedin,wrapasync(async (req,res)=>{
 
   let {id}=req.params;
   const listing=await Listing.findById(id);
@@ -84,10 +93,11 @@ router.put("/:id", validateListing, wrapasync(async (req, res) => {
  
   await Listing.findByIdAndUpdate(id, { ...req.body.listing });
   res.redirect(`/listings/${id}`);
+
 }));
 
 //Delete
-router.delete("/:id", wrapasync(async (req,res) =>{
+router.delete("/:id", isLoggedin,wrapasync(async (req,res) =>{
   
     let {id}=req.params;
     await Listing.findByIdAndDelete(id);
