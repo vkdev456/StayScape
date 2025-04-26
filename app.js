@@ -36,7 +36,7 @@ app.use(methodOverride("_method"));
 app.engine('ejs',ejsMate);//include /partical in express ejs
 app.use(express.static(path.join(__dirname,"/public")));
 
-app.listen(5000, () => {
+app.listen(8080, () => {
   console.log("Server is listening on port 8080");
 });
 
@@ -73,6 +73,8 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req,res,next)=>{
   res.locals.success=req.flash("success");
   res.locals.error=req.flash("error");
+  res.locals.currUser=req.user;//for Login logout in nav bar
+  //current user session
   next();
 });
 
