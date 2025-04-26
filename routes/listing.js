@@ -7,7 +7,6 @@ const Listing = require("../Models/listing.js");
 const {isLoggedin}=require("../middleware.js");
 
 
-
 //validation Listing
 const validateListing = (req, res, next) => {
     if (!req.body || !req.body.listing) {
@@ -39,7 +38,6 @@ router.get("/new",isLoggedin,(req,res)=>{
     res.render("listings/new.ejs");
 });//this shoudl be above show route code
 //because if it overwise it thinks new as id
-
 
 
 //create Route
