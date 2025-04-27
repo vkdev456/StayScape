@@ -5,7 +5,7 @@ const { listingSchema } = require("../schema.js");
 const ExpressError = require("../utils/ExpressError.js");
 const Listing = require("../Models/listing.js");
 const {isLoggedin}=require("../middleware.js");
-
+const {isOwner}=require("../middleware.js");
 //validation Listing
 const validateListing = (req, res, next) => {
     if (!req.body || !req.body.listing) {
@@ -66,14 +66,13 @@ router.get("/:id",wrapasync(async(req,res)=>{
     req.flash("error", "Listing you requested for does not exist");
     res.redirect("/listings");///if listing doesnot exist redirect to listings
     //after and flash the message on top.
-  }
-  console.log(listing);  
+  } 
   res.render("listings/show.ejs",{listing});
 
 }));
 
 //edit Route
-router.get("/:id/edit",isLoggedin,wrapasync(async (req,res)=>{
+router.get("/:id/edit",isLoggedin,isOwner,wrapasync(async (req,res)=>{
 
   let {id}=req.params;
   const listing=await Listing.findById(id);
@@ -82,10 +81,9 @@ router.get("/:id/edit",isLoggedin,wrapasync(async (req,res)=>{
 }));
 
 //update route
-router.put("/:id", validateListing, wrapasync(async (req, res) => {
+router.put("/:id", isLoggedin,isOwner,validateListing, wrapasync(async (req, res) => {
   let { id } = req.params;
-  console.log("Received Update Request:", req.body); 
-
+ 
   if (!req.body.listing) {
       throw new ExpressError(400, "Invalid listing data!");
   }
@@ -95,8 +93,12 @@ router.put("/:id", validateListing, wrapasync(async (req, res) => {
 
 }));
 
+
+
+
+
 //Delete
-router.delete("/:id", isLoggedin,wrapasync(async (req,res) =>{
+router.delete("/:id", isLoggedin,isOwner,wrapasync(async (req,res) =>{
   
     let {id}=req.params;
     await Listing.findByIdAndDelete(id);
