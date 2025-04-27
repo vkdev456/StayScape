@@ -5,6 +5,7 @@ const { reviewSchema } = require("../schema.js");
 const ExpressError = require("../utils/ExpressError.js");
 const Listing = require("../Models/listing.js");
 const Review = require("../Models/review.js");  
+const {isLoggedin}=require("../middleware.js");
 
 // Validate review data
 const validateReview = (req, res, next) => {
@@ -21,7 +22,7 @@ const validateReview = (req, res, next) => {
 };
 
 //Route to add a new review
-router.post("/", validateReview, wrapasync(async (req, res, next) => {
+router.post("/", isLoggedin,validateReview, wrapasync(async (req, res, next) => {
     let listing = await Listing.findById(req.params.id);
     
     if (!listing) {
@@ -29,8 +30,10 @@ router.post("/", validateReview, wrapasync(async (req, res, next) => {
     }
 
     let newReview = new Review(req.body.review);
+    newReview.author=req.user._id;
+    
     listing.reviews.push(newReview);
-
+    
     await newReview.save();
     await listing.save();
     req.flash("success", "New Review Created!");
