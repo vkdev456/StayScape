@@ -6,7 +6,6 @@ const ExpressError = require("../utils/ExpressError.js");
 const Listing = require("../Models/listing.js");
 const {isLoggedin}=require("../middleware.js");
 
-
 //validation Listing
 const validateListing = (req, res, next) => {
     if (!req.body || !req.body.listing) {
@@ -39,7 +38,6 @@ router.get("/new",isLoggedin,(req,res)=>{
 });//this shoudl be above show route code
 //because if it overwise it thinks new as id
 
-
 //create Route
 router.post("/",validateListing,wrapasync(async (req,res,next)=>{
     // in form name=title then below
@@ -47,6 +45,9 @@ router.post("/",validateListing,wrapasync(async (req,res,next)=>{
     //in form name=listing[title] array then this
     // client didnot send valid request then
     const newlisting= new Listing(req.body.listing);
+    //new account new listings to tract user related listings
+    newlisting.owner=req.user._id;
+
     await newlisting.save()
 
     req.flash("success", "New Listing Created!");
@@ -59,14 +60,14 @@ router.post("/",validateListing,wrapasync(async (req,res,next)=>{
 router.get("/:id",wrapasync(async(req,res)=>{
 
   let {id}=req.params;
-  const listing=await Listing.findById(id).populate("reviews");
+  const listing=await Listing.findById(id).populate("reviews").populate("owner");
 
   if(!listing){
-    req.flash("success", "Listing you requested for does not exist");
+    req.flash("error", "Listing you requested for does not exist");
     res.redirect("/listings");///if listing doesnot exist redirect to listings
     //after and flash the message on top.
   }
-
+  console.log(listing);  
   res.render("listings/show.ejs",{listing});
 
 }));
