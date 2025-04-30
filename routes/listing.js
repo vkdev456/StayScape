@@ -28,82 +28,25 @@ const validateListing = (req, res, next) => {
 //index route retrieve listings
 router.get("/",wrapasync(listingController.index));
 
-
 //New listing route form
-router.get("/new",isLoggedin,(req,res)=>{
-    if(!req.isAuthenticated()){//Verify login before creating listing
-      req.flash("error","you must be logged in to Create a listing!");
-      return res.redirect("/listings");
-    }
-    res.render("listings/new.ejs");
-});//this shoudl be above show route code
+router.get("/new",isLoggedin,listingController.new);//this shoudl be above show route code
 //because if it overwise it thinks new as id
 
 //create Route
-router.post("/",validateListing,wrapasync(async (req,res,next)=>{
-    // in form name=title then below
-    // let {title,description,price,image,country,location}=req.body;
-    //in form name=listing[title] array then this
-    // client didnot send valid request then
-    const newlisting= new Listing(req.body.listing);
-    //new account new listings to tract user related listings
-    newlisting.owner=req.user._id;
-
-    await newlisting.save()
-
-    req.flash("success", "New Listing Created!");
-    res.redirect("/listings");
-    
-  })
-);
+router.post("/",validateListing,wrapasync(listingController.create));
 
 //Show Route
-router.get("/:id",wrapasync(async(req,res)=>{
-
-  let {id}=req.params;
-  const listing=await Listing.findById(id).populate({path:"reviews",populate:{path: "author"}}).populate("owner");
-
-  if(!listing){
-    req.flash("error", "Listing you requested for does not exist");
-    res.redirect("/listings");///if listing doesnot exist redirect to listings
-    //after and flash the message on top.
-  } 
-  res.render("listings/show.ejs",{listing});
-
-}));
+router.get("/:id",wrapasync(listingController.show));
 
 //edit Route
-router.get("/:id/edit",isLoggedin,isOwner,wrapasync(async (req,res)=>{
-
-  let {id}=req.params;
-  const listing=await Listing.findById(id);
-  res.render("listings/edit.ejs",{listing});
-
-}));
+router.get("/:id/edit",isLoggedin,isOwner,wrapasync(listingController.edit));
 
 //update route
-router.put("/:id", isLoggedin,isOwner,validateListing, wrapasync(async (req, res) => {
-  let { id } = req.params;
- 
-  if (!req.body.listing) {
-      throw new ExpressError(400, "Invalid listing data!");
-  }
- 
-  await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-  res.redirect(`/listings/${id}`);
-
-}));
-
+router.put("/:id", isLoggedin,isOwner,validateListing, wrapasync(listingController.update));
 
 //Delete
-router.delete("/:id", isLoggedin,isOwner,wrapasync(async (req,res) =>{
-  
-    let {id}=req.params;
-    await Listing.findByIdAndDelete(id);
-    req.flash("success", "Listing Deleted");
-    res.redirect("/listings");
+router.delete("/:id", isLoggedin,isOwner,wrapasync(listingController.delete));
 
-}));
 
 module.exports=router;
 
