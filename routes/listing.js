@@ -6,6 +6,11 @@ const ExpressError = require("../utils/ExpressError.js");
 const Listing = require("../Models/listing.js");
 const {isLoggedin}=require("../middleware.js");
 const {isOwner}=require("../middleware.js");
+
+
+const listingController=require("../controllers/listings.js");
+
+
 //validation Listing
 const validateListing = (req, res, next) => {
     if (!req.body || !req.body.listing) {
@@ -21,12 +26,8 @@ const validateListing = (req, res, next) => {
 };
 
 //index route retrieve listings
-router.get("/",wrapasync(async (req,res)=>{
+router.get("/",wrapasync(listingController.index));
 
-  const allListings= await Listing.find({});
-  res.render("listings/index.ejs",{allListings});
-
-}));
 
 //New listing route form
 router.get("/new",isLoggedin,(req,res)=>{
@@ -92,9 +93,6 @@ router.put("/:id", isLoggedin,isOwner,validateListing, wrapasync(async (req, res
   res.redirect(`/listings/${id}`);
 
 }));
-
-
-
 
 
 //Delete
