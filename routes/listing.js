@@ -7,6 +7,11 @@ const Listing = require("../Models/listing.js");
 const {isLoggedin}=require("../middleware.js");
 const {isOwner}=require("../middleware.js");
 
+const multer=require('multer');//form data parse
+//temp we are saving in folder later we are give clound link
+const upload=multer({dest:'uploads/'});
+
+
 
 const listingController=require("../controllers/listings.js");
 
@@ -33,8 +38,14 @@ router.get("/new",isLoggedin,listingController.new);//this shoudl be above show 
 //because if it overwise it thinks new as id
 
 //create Route
-router.post("/",validateListing,wrapasync(listingController.create));
+// router.post("/",validateListing,wrapasync(listingController.create));
 
+// create Route
+router.post("/",upload.single('listing[image]'),(req,res)=>{
+  res.send(req.file);
+});
+
+ 
 //Show Route
 router.get("/:id",wrapasync(listingController.show));
 
