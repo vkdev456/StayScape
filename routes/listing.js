@@ -1,3 +1,9 @@
+if(process.env.NODE_ENV !="production"){
+  require("dotenv").config();
+}
+
+console.log(process.env.SECRET);
+
 const express = require("express");
 const router = express.Router();
 const wrapasync = require("../utils/wrapasync.js");
@@ -10,7 +16,6 @@ const {isOwner}=require("../middleware.js");
 const multer=require('multer');//form data parse
 //temp we are saving in folder later we are give clound link
 const upload=multer({dest:'uploads/'});
-
 
 
 const listingController=require("../controllers/listings.js");
