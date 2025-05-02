@@ -14,10 +14,12 @@ const {isLoggedin}=require("../middleware.js");
 const {isOwner}=require("../middleware.js");
 
 const multer=require('multer');//form data parse
+
+const {storage}=require("../cloudConfig.js");
 //temp we are saving in folder later we are give clound link
-const upload=multer({dest:'uploads/'});
+const upload=multer({ storage });//storing in cloudinary
 
-
+  
 const listingController=require("../controllers/listings.js");
 
 
