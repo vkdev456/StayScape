@@ -9,9 +9,9 @@ const listingSchema = new Schema({
   },
   description: String,
   image: {
-    type: String,
-    default:"https://unsplash.com/photos/a-lake-surrounded-by-mountains-and-trees-under-a-blue-sky-jV8916l2k0I",
-    set: (v) => v === "" ? "https://unsplash.com/photos/a-lake-surrounded-by-mountains-and-trees-under-a-blue-sky-jV8916l2k0I": v,
+    url: String,
+    filename: String,
+  
   },
   price: Number,
   location: String,

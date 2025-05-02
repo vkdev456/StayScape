@@ -44,13 +44,9 @@ router.get("/",wrapasync(listingController.index));
 router.get("/new",isLoggedin,listingController.new);//this shoudl be above show route code
 //because if it overwise it thinks new as id
 
-//create Route
-// router.post("/",validateListing,wrapasync(listingController.create));
+//Create Route
+router.post("/",upload.single('listing[image]'),validateListing,  wrapasync(listingController.create));
 
-// create Route
-router.post("/",upload.single('listing[image]'),(req,res)=>{
-  res.send(req.file);
-});
 
  
 //Show Route

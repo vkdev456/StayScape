@@ -22,10 +22,13 @@ module.exports.create=async (req,res,next)=>{
     // let {title,description,price,image,country,location}=req.body;
     //in form name=listing[title] array then this
     // client didnot send valid request then
+    let url=req.file.path;
+    let filename=req.file.filename;
+    console.log(url,"..",filename);
     const newlisting= new Listing(req.body.listing);
     //new account new listings to tract user related listings
     newlisting.owner=req.user._id;
-
+    newlisting.image={url, filename};
     await newlisting.save()
 
     req.flash("success", "New Listing Created!");
