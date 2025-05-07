@@ -1,88 +1,125 @@
 const Listing = require("../Models/listing.js");
 
-module.exports.index=async (req,res)=>{
-
-  const allListings= await Listing.find({});
-  res.render("listings/index.ejs",{allListings});
-
+module.exports.index = async (req, res, next) => {
+  try {
+    const allListings = await Listing.find({});
+    res.render("listings/index.ejs", { allListings });
+  } catch (err) {
+    return next(err);  // Pass the error to error-handling middleware
+  }
 };
 
-//new Route callback
-module.exports.new=(req,res)=>{
-    if(!req.isAuthenticated()){//Verify login before creating listing
-      req.flash("error","you must be logged in to Create a listing!");
-      return res.redirect("/listings");
-    }
-    res.render("listings/new.ejs");
-}
+// New Route callback
+module.exports.new = (req, res) => {
+  if (!req.isAuthenticated()) { // Verify login before creating listing
+    req.flash("error", "You must be logged in to create a listing!");
+    return res.redirect("/listings");
+  }
+  res.render("listings/new.ejs");
+};
 
-//create Route callback
-module.exports.create=async (req,res,next)=>{
-    // in form name=title then below
-    // let {title,description,price,image,country,location}=req.body;
-    //in form name=listing[title] array then this
-    // client didnot send valid request then
-    let url=req.file.path;
-    let filename=req.file.filename;
-    console.log(url,"..",filename);
-    const newlisting= new Listing(req.body.listing);
-    //new account new listings to tract user related listings
-    newlisting.owner=req.user._id;
-    newlisting.image={url, filename};
-    await newlisting.save()
+// Create Route callback
+module.exports.create = async (req, res, next) => {
+  try {
+    // File upload
+    let url = req.file.path;
+    let filename = req.file.filename;
+    console.log(url, "..", filename);
+
+    const newListing = new Listing(req.body.listing);
+    newListing.owner = req.user._id;
+    newListing.image = { url, filename };
+
+    await newListing.save();
 
     req.flash("success", "New Listing Created!");
-    res.redirect("/listings");
-    
-}
+    return res.redirect("/listings");  // Return immediately after the redirect
 
-//show Route
-module.exports.show=async(req,res)=>{
-
-  let {id}=req.params;
-  const listing=await Listing.findById(id).populate({path:"reviews",populate:{path: "author"}}).populate("owner");
-
-  if(!listing){
-    req.flash("error", "Listing you requested for does not exist");
-    res.redirect("/listings");///if listing doesnot exist redirect to listings
-    //after and flash the message on top.
-  } 
-  res.render("listings/show.ejs",{listing});
-
-};
-
-
-//edit Route Callback
-
-module.exports.edit=async (req,res)=>{
-
-  let {id}=req.params;
-  const listing=await Listing.findById(id);
-  res.render("listings/edit.ejs",{listing});
-
-};
-
-
-//update route callback
-module.exports.update=async (req, res) => {
-  let { id } = req.params;
- 
-  if (!req.body.listing) {
-      throw new ExpressError(400, "Invalid listing data!");
+  } catch (err) {
+    return next(err);  // Handle any error (e.g., DB errors) and pass to error middleware
   }
- 
-  await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-  res.redirect(`/listings/${id}`);
+};
 
-}
+// Show Route callback
+module.exports.show = async (req, res, next) => {
+  try {
+    let { id } = req.params;
+    const listing = await Listing.findById(id)
+      .populate({ path: "reviews", populate: { path: "author" } })
+      .populate("owner");
 
+    if (!listing) {
+      req.flash("error", "Listing you requested for does not exist");
+      return res.redirect("/listings"); // If listing doesn't exist, redirect to listings page
+    }
 
-//delete Route callback
-module.exports.delete=async (req,res) =>{
-  
-  let {id}=req.params;
-  await Listing.findByIdAndDelete(id);
-  req.flash("success", "Listing Deleted");
-  res.redirect("/listings");
+    res.render("listings/show.ejs", { listing });
 
+  } catch (err) {
+    return next(err); // Pass the error to the error-handling middleware
+  }
+};
+
+// Edit Route callback
+module.exports.edit = async (req, res, next) => {
+  try {
+    let { id } = req.params;
+    const listing = await Listing.findById(id);
+
+    if (!listing) {
+      req.flash("error", "Listing not found");
+      return res.redirect("/listings");
+    }
+
+    res.render("listings/edit.ejs", { listing });
+  } catch (err) {
+    return next(err);  // Handle errors (DB, etc.)
+  }
+};
+
+// Update Route callback
+module.exports.update = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body.listing;
+
+    // Check if there's a new image file uploaded
+    if (req.file) {
+      updatedData.image = {
+        url: req.file.path,   // Cloudinary URL
+        filename: req.file.filename   // Filename for Cloudinary
+      };
+    }
+
+    const updatedListing = await Listing.findByIdAndUpdate(id, updatedData, { new: true });
+
+    if (!updatedListing) {
+      req.flash("error", "Listing not found");
+      return res.redirect("/listings");
+    }
+
+    req.flash("success", "Listing Updated!");
+    res.redirect(`/listings/${id}`);  // Redirect to the updated listing page
+  } catch (err) {
+    return next(err);  // Handle any errors (DB errors, file upload issues)
+  }
+};
+
+// Delete Route callback
+module.exports.delete = async (req, res, next) => {
+  try {
+    let { id } = req.params;
+    const listing = await Listing.findByIdAndDelete(id);
+
+    if (!listing) {
+      req.flash("error", "Listing not found");
+      return res.redirect("/listings");
+    }
+
+    req.flash("success", "Listing Deleted");
+    res.redirect("/listings");
+
+  } catch (err) {
+    return next(err);  // Handle any errors
+  }
 };

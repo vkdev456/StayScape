@@ -9,7 +9,7 @@
     <div class="col-8">
         <h2><b><%= listing.title %></b></h2>
         <div class="card listing-card"> 
-            <img src="<%= listing.image%>" class="card-img-top show-image" alt="Listing Image">
+            <img src="<%= listing.image.url%>" class="card-img-top show-image" alt="Listing Image">
             <div class="card-body">
                 <br>
                 <P class="card-text">Owned by<i> <%= listing.owner.username %></i></P>
