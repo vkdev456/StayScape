@@ -24,7 +24,6 @@ module.exports.create = async (req, res, next) => {
     // File upload
     let url = req.file.path;
     let filename = req.file.filename;
-    console.log(url, "..", filename);
 
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
@@ -79,30 +78,20 @@ module.exports.edit = async (req, res, next) => {
 
 // Update Route callback
 module.exports.update = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const updatedData = req.body.listing;
-
-    // Check if there's a new image file uploaded
-    if (req.file) {
-      updatedData.image = {
-        url: req.file.path,   // Cloudinary URL
-        filename: req.file.filename   // Filename for Cloudinary
-      };
-    }
-
-    const updatedListing = await Listing.findByIdAndUpdate(id, updatedData, { new: true });
-
-    if (!updatedListing) {
-      req.flash("error", "Listing not found");
-      return res.redirect("/listings");
-    }
-
-    req.flash("success", "Listing Updated!");
-    res.redirect(`/listings/${id}`);  // Redirect to the updated listing page
-  } catch (err) {
-    return next(err);  // Handle any errors (DB errors, file upload issues)
+ 
+  let {id}=req.params;
+  let listing=await Listing.findByIdAndUpdate(id,{...req.body.listing});
+  if(typeof req.file!="undefined"){
+       let url = req.file.path;
+       let filename = req.file.filename;
+       listing.image={url,filename};
+       await listing.save();
   }
+
+  req.flash("success","Listing Updated!");
+  res.redirect(`/listings/${id}`);
+
+
 };
 
 // Delete Route callback

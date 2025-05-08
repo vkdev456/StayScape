@@ -56,7 +56,7 @@ router.get("/:id",wrapasync(listingController.show));
 router.get("/:id/edit",isLoggedin,isOwner,wrapasync(listingController.edit));
 
 //update route
-router.put("/:id", isLoggedin,isOwner,validateListing, wrapasync(listingController.update));
+router.put("/:id", isLoggedin,isOwner,upload.single('listing[image]'),validateListing, wrapasync(listingController.update));
 
 //Delete
 router.delete("/:id", isLoggedin,isOwner,wrapasync(listingController.delete));
