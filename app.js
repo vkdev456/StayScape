@@ -40,9 +40,6 @@ app.listen(8080, () => {
   console.log("Server is listening on port 8080");
 });
 
-app.get("/",(req,res)=>{
-  res.send('Hi, I am Root');
-})
 
 //sessions
 const sessionOptions={

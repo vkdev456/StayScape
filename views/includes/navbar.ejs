@@ -1,26 +1,35 @@
 <nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top"><!--Added Border bottom class-->
     <div class="container-fluid">
-      <a class="navbar-brand" href="/"><i class="fa-solid fa-compass"></i></a>
+      <a class="navbar-brand" href="/listings"><i class="fa-solid fa-compass"></i></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <a class="nav-link" href="/">Home</a><!--Home route redirect-->
-          <a class="nav-link" href="/listings">All listings</a>
-          <a class="nav-link" href="/listings/new">Add new listing</a>
+          
+          <a class="nav-link" href="/listings">Explore</a>
+         
         </div>
         <div class="navbar-nav ms-auto">
+          <a class="nav-link" href="/listings/new">Stayscape your home</a>
           <% if(!currUser){ %>
-          <a class="nav-link" href="/signup">Signup</a><!--Home route redirect-->
-          <a class="nav-link" href="/login">login</a>
+          <a class="nav-link" href="/signup"><b>Signup</b></a><!--Home route redirect-->
+          <a class="nav-link" href="/login"><b>login</b></a>
           <% } %> <% if(currUser) { %>
           <a class="nav-link" href="/logout">logout</a>
           <% } %>
         </div>
+        
       </div>
     </div>
 </nav>
+
+
+
+
+
+
+
 
 
 
