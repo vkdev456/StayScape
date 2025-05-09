@@ -10,7 +10,7 @@ const MongoStore=require("connect-mongo");
 const flash=require("connect-flash");
 const passport=require("passport");
 const LocalStrategy=require("passport-local");
-const User=require("./models/user.js");
+const User=require("../models/user.js");
 
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
@@ -39,7 +39,7 @@ app.use(methodOverride("_method"));
 app.engine('ejs',ejsMate);//include /partical in express ejs
 app.use(express.static(path.join(__dirname,"/public")));
 
-app.listen(8000, () => {
+app.listen(5000, () => {
   console.log("Server is listening on port 8080");
 });
 
