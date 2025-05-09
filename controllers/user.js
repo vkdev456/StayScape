@@ -1,6 +1,6 @@
 const Review = require("../Models/review.js");  
 const Listing = require("../Models/listing.js");
-const User=require("../models/user.js"); 
+const User=require("../Models/user.js"); 
 
 
 //post route callback for user
