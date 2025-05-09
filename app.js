@@ -6,6 +6,7 @@ const ejsMate = require("ejs-mate");
 const wrapasync = require("./utils/wrapasync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
+const MongoStore=require("connect-mongo");
 const flash=require("connect-flash");
 const passport=require("passport");
 const LocalStrategy=require("passport-local");
@@ -16,9 +17,11 @@ const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 const { parseArgs } = require("util");
 
+const dburl=process.env.ATLASDB_URL;
+
 async function main(){
   try {
-    await mongoose.connect("mongodb://127.0.0.1:27017/Stayscape");
+    await mongoose.connect(dburl);
     console.log("Connected to DB");
   } catch (err) {
     console.error("DB connection error:", err);
@@ -36,13 +39,26 @@ app.use(methodOverride("_method"));
 app.engine('ejs',ejsMate);//include /partical in express ejs
 app.use(express.static(path.join(__dirname,"/public")));
 
-app.listen(8080, () => {
+app.listen(8000, () => {
   console.log("Server is listening on port 8080");
 });
 
 
+
+
+const store=MongoStore.create({
+
+  mongoUrl:dburl,
+  crypto:{
+    secret:"mysupersecretcode"
+  },
+  touchAfter: 24*3600 // session time no need to login back 
+
+})
+
 //sessions
 const sessionOptions={
+  store, //mongo store 
   secret: "mysupersecretcode",
   resave: false,
   saveUninitialized: true,
@@ -52,6 +68,13 @@ const sessionOptions={
     httpOnly:true,
   },
 }
+
+
+store.on("error",()=>{
+  console.log("Error in MONGO SESSION STORE",err);
+});
+
+
 
 //session
 app.use(session(sessionOptions));
