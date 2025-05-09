@@ -44,8 +44,6 @@ app.listen(8000, () => {
 });
 
 
-
-
 const store=MongoStore.create({
 
   mongoUrl:dburl,
@@ -55,6 +53,7 @@ const store=MongoStore.create({
   touchAfter: 24*3600 // session time no need to login back 
 
 })
+
 
 //sessions
 const sessionOptions={
