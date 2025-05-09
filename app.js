@@ -12,10 +12,13 @@ const passport=require("passport");
 const LocalStrategy=require("passport-local");
 const User=require("./Models/user.js");
 
+const Listing = require("./Models/listing.js");
+
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 const { parseArgs } = require("util");
+
 
 const dburl=process.env.ATLASDB_URL;
 
@@ -134,9 +137,14 @@ app.get("/testListing", async (req, res) => {
 
 //if Route other than above
 // * is used take that Route 
-app.all("*",(req,res,next)=>{
-  next(new ExpressError(404, "Page not found!"));
-});
+app.get('/',async(req,res)=>{
+   const allListings = await Listing.find({});
+   res.render("listings/index.ejs", { allListings });
+})
+
+// app.all("*",(req,res,next)=>{
+//   next(new ExpressError(404, "Page not found!"));
+// });
 
 app.use((err,req,res,next)=>{
 
