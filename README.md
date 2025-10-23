@@ -1,4 +1,4 @@
-# 🏡 StayScape  - <a href="https://stayscape-5um8.onrender.com" target="_blank">Live</a>
+# 🏡 StayScape  
 
 
 
